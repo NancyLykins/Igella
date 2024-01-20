@@ -1,5 +1,3 @@
-
-
 ###################################################################################################
 #                                                                                                 #
 #          #####   #     #    ###     ##    #       #       ##    #    #######   #     #          #
@@ -8,13 +6,10 @@
 #          #    #     #       ###     #   # #    #######    #   # #    #            #             #
 #          #####      #       ###     #    ##   #       #   #    ##    #######      #             #
 #                                                                                                 # 
-###################################################################################################
-        
-          
+###################################################################################################        
 import discord, cleanCache, asyncio, youtube_dl, checkCharacter, math
 from discord import app_commands
 from discord.ext import commands
-
 from key import TOKEN
 
 from Commands.character.startCreation import Character
@@ -147,12 +142,17 @@ async def test(ctx):
 #    #   GAME MASTER   #
 #    ###################
 
-async def isGM(ctx):
-    autorRole = discord.utils.get(ctx.author.roles, name="GM")
-    if autorRole is None:
-        await ctx.send("Você não tem permissão para usar esse comando")
-    return False if (autorRole is None) else True
-
+async def isGM(ctx, i=False):
+    if i is False:
+        autorRole = discord.utils.get(ctx.author.roles, name="GM")
+        if autorRole is None:
+            await ctx.send("Você não tem permissão para usar esse comando")
+        return False if (autorRole is None) else True
+    else:
+        autorRole = discord.utils.get(ctx.user.roles, name="GM")
+        if autorRole is None:
+            await ctx.response.send_message("Você não tem permissão para usar esse comando", ephemeral=True)
+        return False if (autorRole is None) else True
 @client.command()
 async def new(ctx, obj=None):
     if await isGM(ctx):
@@ -468,6 +468,14 @@ async def next(interaction: discord.Interaction):
 #       #   #   #   #       #      #   #
 #       #   #    #  #        #####     #
 #       ################################
+
+@client.tree.command(name="give")
+@app_commands.describe(player="Quem vai receber o item?")
+@app_commands.describe(item="O item que a pessoa deve receber")
+@app_commands.describe(amount="Quantidade de itens que o jogador deve receber")
+async def give(interaction: discord.Interaction, player: discord.Member, item: str, amount: int):
+    if await isGM(interaction, i=True):
+        await giveItem(interaction, player, item, amount)
 
 @client.tree.command(name="damage")
 @app_commands.describe(player="O personagem de quem recebera dano?")

@@ -3,25 +3,10 @@ from Commands.sql.itens.saveItenInInventary import saveItenInInventary
 from Commands.sql.itens.select.takeItemQuant import takeItemQuant
 from Commands.sql.itens.update.updateItensInInventary import updateItensInInventary
 
-async def giveItem(ctx, player):
-    msg = ctx.message.content
-    _, item = msg.split(">")
-    item = item.split(" ")
-    itemList = [_ for _ in item if _ != '']
-    item = itemList
-    length = len(item)
-    if (length <= 1):
-        await ctx.send("Comando digitado incorretamente") 
-        return
-    
-    amount = int(item[length-1])
-    itemName = ""
-    for _ in range(length-1):
-        itemName += f"{item[_]} "
-    itemName = itemName[:-1]
+async def giveItem(interaction, player, item, amount):
     try:
-        itemId = takeItemId(itemName.lower())
-        playerId = player.split("<@")[1][:-1]
+        itemId = takeItemId(item.lower())
+        playerId = player.id
         try:
             quant = int(takeItemQuant(playerId, itemId))
         except:
@@ -30,8 +15,8 @@ async def giveItem(ctx, player):
             saveItenInInventary(playerId, itemId, amount)
         else:
             updateItensInInventary(playerId, itemId, (amount + int(takeItemQuant(playerId, itemId))))
-        await ctx.send("Item recebido com sucesso")
+        await interaction.response.send_message(f"{player} recebeu {'{} {} com sucesso'.format(amount, item if amount == 1 else item + 's')}", ephemeral=True)
 
     except:
-        await ctx.send(">>> Nenhum item encontrado")
+        await interaction.response.send_message(">>> Nenhum item encontrado", ephemeral=True)
     
