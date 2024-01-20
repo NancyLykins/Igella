@@ -7,7 +7,7 @@
 #          #####      #       ###     #    ##   #       #   #    ##    #######      #             #
 #                                                                                                 # 
 ###################################################################################################        
-import discord, cleanCache, asyncio, youtube_dl, checkCharacter, math
+import discord, cleanCache, asyncio, youtube_dl, checkCharacter, math, os
 from discord import app_commands
 from discord.ext import commands
 from key import TOKEN
@@ -59,8 +59,21 @@ effectBuff = {
     "vigorBuff": 0
 }
 
+
+
+async def setup_hook():
+    for root, dirs, files in os.walk("Cogs"):
+        for file in files:
+            if not root.endswith("__pycache__"):
+                path = os.path.join(root, file)[:-3].replace('/', '.')
+                print(f"Loading {path}")
+                await client.load_extension(path)
+
+
+
 @client.event
 async def on_ready():
+    await setup_hook()
     synced = await client.tree.sync()
     print(f"Syncd {len(synced)} command(s)")
     await cleanCache.cleanCache(client)
