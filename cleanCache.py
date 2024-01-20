@@ -10,4 +10,4 @@ async def cleanCache(client):
         testChannel = discord.utils.get(myGuild.text_channels, name="testes")
         await testChannel.purge()
     except:
-        pass
+        os.mkdir("Cache")
