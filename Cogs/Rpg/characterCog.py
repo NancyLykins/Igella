@@ -10,7 +10,7 @@ class characterCog(commands.Cog):
     @app_commands.command(name="delete", description="Exclui um personagem existente")
     async def delete(self, interaction: discord.Interaction):
         await deleteCharacter(interaction)
-        
+
 async def setup(client: discord.Client) -> None:
     await client.add_cog(characterCog(client))
     

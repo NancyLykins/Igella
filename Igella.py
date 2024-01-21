@@ -216,7 +216,6 @@ async def exting(ctx, monsterName=None):
 #    #   CHARACTERS   #
 #    ##################
 
-
 characters = {}
 @client.command()
 #CREATE CHARACTER 
@@ -242,14 +241,6 @@ async def create(ctx):
 async def status(ctx):
     try:
         await showStatus(ctx)
-    except:
-        await checkCharacter.checkCharacterExist(ctx)
-
-@client.command()
-#DELETE CHARACTER
-async def delete(ctx):
-    try:
-        await deleteChar(ctx.author.id)
     except:
         await checkCharacter.checkCharacterExist(ctx)
 
@@ -415,63 +406,48 @@ def checkQueue(interaction, guildId, source):
         if interaction.guild.voice_client and interaction.guild.voice_client.is_connected():
             interaction.guild.voice_client.play(next_source, after=lambda x=None: checkQueue(interaction, guildId, next_source))
 
-@client.tree.command(name="play")
-@app_commands.describe(url="Qual a url da música")
-async def play(interaction: discord.Interaction, url: str):   
-    if not interaction.user.voice:
-        await interaction.response.send_message("Você não esta conectado a um canal de voz", ephemeral=True)
-        return
-    guildId = interaction.guild.id
-    channel = interaction.user.voice.channel
-    voiceChannel = discord.utils.get(interaction.guild.voice_channels, name=channel.name)
-    if not interaction.guild.voice_client:
-        await voiceChannel.connect()
+# @client.tree.command(name="play")
+# @app_commands.describe(url="Qual a url da música")
+# async def play(interaction: discord.Interaction, url: str):   
+#     if not interaction.user.voice:
+#         await interaction.response.send_message("Você não esta conectado a um canal de voz", ephemeral=True)
+#         return
+#     guildId = interaction.guild.id
+#     channel = interaction.user.voice.channel
+#     voiceChannel = discord.utils.get(interaction.guild.voice_channels, name=channel.name)
+#     if not interaction.guild.voice_client:
+#         await voiceChannel.connect()
         
-    try:
-        with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
-            info = ydl.extract_info(url, download=False)
-            if not info:
-                await interaction.response.send_message("Nenhum video encontrado nessa url", ephemeral=True)
-            source_url = info["formats"][0]["url"]
-            source = await discord.FFmpegOpusAudio.from_probe(source_url, **FFMPEG_OPTIONS)
-            if guildId in queue.keys():            
-                queue[guildId].append(source)
-            else:
-                queue[guildId] = [source]
-            await interaction.response.send_message(f"Now playing")
-    except:
-        await interaction.response.send_message("Não foi possivel carregar o video ou url invalida", ephemeral=True)
+#     try:
+#         with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
+#             info = ydl.extract_info(url, download=False)
+#             if not info:
+#                 await interaction.response.send_message("Nenhum video encontrado nessa url", ephemeral=True)
+#             source_url = info["formats"][0]["url"]
+#             source = await discord.FFmpegOpusAudio.from_probe(source_url, **FFMPEG_OPTIONS)
+#             if guildId in queue.keys():            
+#                 queue[guildId].append(source)
+#             else:
+#                 queue[guildId] = [source]
+#             await interaction.response.send_message(f"Now playing")
+#     except:
+#         await interaction.response.send_message("Não foi possivel carregar o video ou url invalida", ephemeral=True)
 
-    if not interaction.guild.voice_client.is_playing():
-        interaction.guild.voice_client.play(source, after=lambda x=None: checkQueue(interaction, guildId, source))
-    
-@client.tree.command(name="pause")
-async def pause(interaction: discord.Interaction):
-    await interaction.guild.voice_client.pause()
-    await interaction.response.send_message("Audio pausado!")
-
-@client.tree.command(name="resume")
-async def resume(interaction: discord.Interaction):
-    await interaction.guild.voice_client.resume()
-    await interaction.response.send_message("Audio despausado!")
+#     if not interaction.guild.voice_client.is_playing():
+#         interaction.guild.voice_client.play(source, after=lambda x=None: checkQueue(interaction, guildId, source))
 
 
-@client.tree.command(name="stop")
-async def stop(interaction: discord.Interaction):
-    interaction.guild.voice_client.stop()
-    await interaction.response.send_message("Parou")
 
-
-@client.tree.command(name="next")
-async def next(interaction: discord.Interaction):
-    print(interaction.guild.voice_client.stop())
-    if queue[interaction.guild.id] != []:
-        await interaction.response.send_message("Pulou")
-        await asyncio.sleep(10)
-        interaction.guild.voice_client.play(queue[interaction.guild.id][0])
-        queue[interaction.guild.id].pop(0)
-    else:
-        await interaction.response.send_message("Nenhum música na fila")
+# @client.tree.command(name="next")
+# async def next(interaction: discord.Interaction):
+#     interaction.guild.voice_client.stop()
+#     if queue[interaction.guild.id] != []:
+#         await interaction.response.send_message("Pulou")
+#         await asyncio.sleep(10)
+#         interaction.guild.voice_client.play(queue[interaction.guild.id][0])
+#         queue[interaction.guild.id].pop(0)
+#     else:
+#         await interaction.response.send_message("Nenhum música na fila")
 
 #       ################################
 #       #   ####    #####    ######    #

@@ -9,7 +9,11 @@ class confirmButtons(discord.ui.View):
         
     @discord.ui.button(label="Sim", style=discord.ButtonStyle.green)
     async def yes(self, interaction, button):
-        await deleteChar(interaction.user.id)
+        try:
+            await deleteChar(interaction.user.id)
+            await interaction.response.edit_message("Personagem excluido com sucesso")
+        except:
+            await interaction.response.edit_message(f"Nenhum personagem encontrado para {interaction.user}")
         
     @discord.ui.button(label="Não", style=discord.ButtonStyle.red)
     async def no(self, interaction, button):
