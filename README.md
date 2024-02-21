@@ -1,0 +1,1 @@
+This is the code of the firts versions of my discord bot, that I use to master an RPG. I'm beggining in the programmacion then it isn't perfect. Now i'm working on an update for this, soon I will post the next versions, I expect somebody enjoy and giveme feedback about the code if possible
